@@ -13,7 +13,6 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:background="@color/soft_blue">
-    <!-- العنوان والبحث -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -42,6 +41,37 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:tint="@color/navy_ink" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/filterContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="8dp"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/etSearch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="اكتب اسم المنتج"
+            android:background="@drawable/bg_search_box"
+            android:padding="8dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/cool_gray" />
+
+        <ImageView
+            android:id="@+id/ivClearFilter"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_close"
+            android:layout_gravity="center_vertical"
+            app:tint="@color/navy_ink" />
+    </LinearLayout>
+
 </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -59,10 +89,68 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        android:padding="16dp"
         android:layout_weight="1"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         tools:listitem="@layout/product_item"
         android:overScrollMode="never"
       />
+    <androidx.cardview.widget.CardView
+        android:id="@+id/btnViewCart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:visibility="visible"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp"
+        app:cardBackgroundColor="@color/sky_blue"
+        android:clickable="true"
+        android:foreground="?attr/selectableItemBackground">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:background="@drawable/bg_button_ripple"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="@android:color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="عرض السلة"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tvTotalPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="350"
+            android:textSize="18sp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+        <TextView
+        android:id="@+id/tvCurrency"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EGP"
+        android:textSize="12sp"
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
+    </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 </LinearLayout>
