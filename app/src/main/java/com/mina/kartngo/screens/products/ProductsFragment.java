@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,6 +42,7 @@ public class ProductsFragment extends Fragment {
     private ImageView ivFilter, ivClearFilter;
     private CardView btnViewCart;
     private TextView tvTotalPrice,tvCurrency;
+
     public ProductsFragment() {
     }
 
@@ -102,6 +104,13 @@ public class ProductsFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {}
         });
+
+            btnViewCart.setOnClickListener(v -> {
+
+                NavHostFragment.findNavController(ProductsFragment.this)
+                        .navigate(R.id.action_productsFragment_to_orderFragment);
+            });
+
 
     }
     private void setupCategoryRecycler() {
