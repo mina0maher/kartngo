@@ -146,7 +146,7 @@ Or simply download the APK:
 
 - **Track**: Android (Java)
 - **GitHub Repo**: [https://github.com/mina0maher/kartngo](https://github.com/mina0maher/kartngo)
-- **Video Recording**: Attached in email
+- **Video Recording**: [watch the video here](https://youtu.be/f9NbI5dGx54) to see the task being performed from scratch using Proxy AI
 - **Design Screenshot**: [Original Design](https://github.com/mina0maher/kartngo/blob/master/screenShots/original_screen.jpg?raw=true)
 
 ---
