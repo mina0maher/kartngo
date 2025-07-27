@@ -22,7 +22,6 @@ public class Product {
         this(0, name, imageUrl, category, price, currency);
     }
 
-    // Getters and setters
 
     public int getId() {
         return id;

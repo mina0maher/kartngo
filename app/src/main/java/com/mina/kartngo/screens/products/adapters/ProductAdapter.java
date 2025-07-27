@@ -60,7 +60,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         }
         holder.textCount.setText(String.valueOf(quantity));
 
-        // Load images (optional with Glide or your method)
         Glide.with(holder.imgProduct.getContext())
                 .load(product.getImageUrl())
                 .into(holder.imgProduct);

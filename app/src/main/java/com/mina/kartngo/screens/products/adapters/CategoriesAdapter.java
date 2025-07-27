@@ -53,7 +53,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
         holder.container.setSelected(isSelected);
         holder.card.setOnClickListener(v -> {
             if (category.equals(selectedCategory)) {
-                selectedCategory = null; // unselect if selected again
+                selectedCategory = null;
                 notifyDataSetChanged();
                 listener.onCategoryClick(null);
             } else {
