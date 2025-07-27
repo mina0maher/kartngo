@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace = "com.mina.kartngo"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.mina.kartngo"
@@ -44,5 +44,9 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:2.5.2")
     implementation ("androidx.lifecycle:lifecycle-livedata:2.5.2")
     implementation ("androidx.lifecycle:lifecycle-viewmodel:2.5.2")
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+
+    implementation ("androidx.navigation:navigation-fragment:2.7.7")
+    implementation ("androidx.navigation:navigation-ui:2.7.7")
 
 }
