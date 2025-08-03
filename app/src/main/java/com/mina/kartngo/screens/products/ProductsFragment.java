@@ -145,10 +145,10 @@ public class ProductsFragment extends Fragment {
 
             @Override
             public void onProductClicked(Product product) {
-                String message = "🍔 " + product.getName() + "\n"
-                        + "Price: " + product.getPrice() + " "+ product.getCurrency();
-
-                showToast(requireContext(), message);
+                Bundle bundle = new Bundle();
+                bundle.putInt("productId", product.getId());
+                NavHostFragment.findNavController(ProductsFragment.this)
+                        .navigate(R.id.action_productsFragment_to_detailsFragment, bundle);
             }
         });
 
