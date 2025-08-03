@@ -23,6 +23,7 @@ import com.mina.kartngo.R;
 import com.mina.kartngo.models.OrderItem;
 import com.mina.kartngo.models.Product;
 import com.mina.kartngo.screens.MainViewModel;
+import com.mina.kartngo.screens.products.ProductsFragment;
 import com.mina.kartngo.screens.products.adapters.ProductAdapter;
 import com.mina.kartngo.screens.products.listeneres.OnProductActionListener;
 
@@ -88,10 +89,10 @@ public class OrderFragment extends Fragment {
 
             @Override
             public void onProductClicked(Product product) {
-                String message = "🍔 " + product.getName() + "\n"
-                        + "Price: " + product.getPrice() + " "+ product.getCurrency();
-
-                showToast(requireContext(), message);
+                Bundle bundle = new Bundle();
+                bundle.putInt("productId", product.getId());
+                NavHostFragment.findNavController(OrderFragment.this)
+                        .navigate(R.id.action_orderFragment_to_detailsFragment, bundle);
             }
         });
 
