@@ -9,17 +9,22 @@ public class Product {
     private double price;
     private String currency;
 
-    public Product(int id, String name, String imageUrl, String category, double price, String currency) {
+
+
+    private String details;
+
+    public Product(int id, String name, String imageUrl, String category, double price, String currency,String details) {
         this.id = id;
         this.name = name;
         this.imageUrl = imageUrl;
         this.category = category;
         this.price = price;
         this.currency = currency;
+        this.details = details;
     }
 
-    public Product(String name, String imageUrl, String category, double price, String currency) {
-        this(0, name, imageUrl, category, price, currency);
+    public Product(String name, String imageUrl, String category, double price, String currency, String details) {
+        this(0, name, imageUrl, category, price, currency, details);
     }
 
 
@@ -67,5 +72,13 @@ public class Product {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
     }
 }

@@ -60,7 +60,8 @@ public class ProductRepository implements ProductDataSource {
                 entity.getImageUrl(),
                 entity.getCategory(),
                 entity.getPrice(),
-                entity.getCurrency()
+                entity.getCurrency(),
+                entity.getDetails()
         );
     }
 
@@ -70,7 +71,8 @@ public class ProductRepository implements ProductDataSource {
                 model.getImageUrl(),
                 model.getCategory(),
                 model.getPrice(),
-                model.getCurrency()
+                model.getCurrency(),
+                model.getDetails()
         );
         entity.setId(model.getId());
         return entity;
