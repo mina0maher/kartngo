@@ -61,6 +61,17 @@ public class MainViewModel extends AndroidViewModel {
         filteredProductsLiveData.addSource(searchQueryLiveData, s -> filterProducts());
 
     }
+    public Product getProductById(int id) {
+        List<Product> allProducts = productsLiveData.getValue();
+        if (allProducts != null) {
+            for (Product product : allProducts) {
+                if (product.getId()==id) {
+                    return product;
+                }
+            }
+        }
+        return null;
+    }
 
     private void filterProducts() {
         List<Product> allProducts = productsLiveData.getValue();
