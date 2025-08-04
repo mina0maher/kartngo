@@ -1,4 +1,4 @@
-package com.mina.kartngo.data.remote.entites.session;
+package com.mina.kartngo.data.remote.entites.auth;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

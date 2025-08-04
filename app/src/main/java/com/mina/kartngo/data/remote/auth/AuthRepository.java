@@ -7,9 +7,9 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.mina.kartngo.data.remote.entites.session.AssignStoreAndBringPropertiesRequest;
-import com.mina.kartngo.data.remote.entites.session.AssignStoreAndBringPropertiesResponse;
-import com.mina.kartngo.data.remote.entites.session.LoginResponse;
+import com.mina.kartngo.data.remote.entites.auth.AssignStoreAndBringPropertiesRequest;
+import com.mina.kartngo.data.remote.entites.auth.AssignStoreAndBringPropertiesResponse;
+import com.mina.kartngo.data.remote.entites.auth.LoginResponse;
 import com.mina.kartngo.data.util.Result;
 
 import okhttp3.Headers;

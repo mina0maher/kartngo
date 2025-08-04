@@ -1,6 +1,6 @@
-package com.mina.kartngo.data.remote.entites.session;
+package com.mina.kartngo.data.remote.entites.auth;
 
-public class PartyAddress {
+public class StoreAddress {
     private String addressID;
     private String postalCode;
     private String add1;
@@ -64,3 +64,4 @@ public class PartyAddress {
         return area;
     }
 }
+

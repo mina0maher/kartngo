@@ -1,15 +1,13 @@
 package com.mina.kartngo.data.remote.auth;
 
-import com.mina.kartngo.data.remote.entites.session.AssignStoreAndBringPropertiesRequest;
-import com.mina.kartngo.data.remote.entites.session.AssignStoreAndBringPropertiesResponse;
-import com.mina.kartngo.data.remote.entites.session.LoginResponse;
+import com.mina.kartngo.data.remote.entites.auth.AssignStoreAndBringPropertiesRequest;
+import com.mina.kartngo.data.remote.entites.auth.AssignStoreAndBringPropertiesResponse;
+import com.mina.kartngo.data.remote.entites.auth.LoginResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.Header;
-import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 public interface AuthApi {

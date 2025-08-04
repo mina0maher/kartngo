@@ -1,4 +1,4 @@
-package com.mina.kartngo.data.remote.entites.session;
+package com.mina.kartngo.data.remote.entites.auth;
 
 public class Store {
     private boolean isPublic;
