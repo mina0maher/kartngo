@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.mina.kartngo.data.ProductRepository;
+import com.mina.kartngo.data.local.ProductRepository;
 
 import com.mina.kartngo.models.OrderItem;
 import com.mina.kartngo.models.Product;

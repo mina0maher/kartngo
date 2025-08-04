@@ -1,4 +1,4 @@
-package com.mina.kartngo.data;
+package com.mina.kartngo.data.local;
 
 import android.content.Context;
 
