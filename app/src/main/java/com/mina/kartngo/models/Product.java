@@ -4,28 +4,24 @@ public class Product {
 
     private int id;
     private String name;
-    private String imageUrl;
+    private String image;
     private String category;
     private double price;
-    private String currency;
 
 
 
     private String details;
 
-    public Product(int id, String name, String imageUrl, String category, double price, String currency,String details) {
+    public Product(int id, String name, String image, String category, double price, String details) {
         this.id = id;
         this.name = name;
-        this.imageUrl = imageUrl;
+        this.image = image;
         this.category = category;
         this.price = price;
-        this.currency = currency;
         this.details = details;
     }
 
-    public Product(String name, String imageUrl, String category, double price, String currency, String details) {
-        this(0, name, imageUrl, category, price, currency, details);
-    }
+
 
 
     public int getId() {
@@ -42,12 +38,12 @@ public class Product {
         this.name = name;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getImage() {
+        return image;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getCategory() {
@@ -66,13 +62,6 @@ public class Product {
         this.price = price;
     }
 
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
 
     public String getDetails() {
         return details;

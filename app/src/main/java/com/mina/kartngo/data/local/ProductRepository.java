@@ -60,7 +60,6 @@ public class ProductRepository implements ProductDataSource {
                 entity.getImageUrl(),
                 entity.getCategory(),
                 entity.getPrice(),
-                entity.getCurrency(),
                 entity.getDetails()
         );
     }
@@ -68,10 +67,10 @@ public class ProductRepository implements ProductDataSource {
     private ProductEntity mapModelToEntity(Product model) {
         ProductEntity entity = new ProductEntity(
                 model.getName(),
-                model.getImageUrl(),
+                model.getImage(),
                 model.getCategory(),
                 model.getPrice(),
-                model.getCurrency(),
+                model.getCategory(),
                 model.getDetails()
         );
         entity.setId(model.getId());

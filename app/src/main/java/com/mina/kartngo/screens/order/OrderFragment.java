@@ -2,6 +2,8 @@ package com.mina.kartngo.screens.order;
 
 import static com.mina.kartngo.screens.utils.ToastUtils.showToast;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +39,7 @@ public class OrderFragment extends Fragment {
     private TextView tvTotalPrice, tvCurrency;
     private ImageView btnBack;
     private CardView btnConfirm;
-
+    private SharedPreferences prefs;
     public OrderFragment() {}
 
     @Override
@@ -49,6 +51,8 @@ public class OrderFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
 
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
@@ -94,7 +98,7 @@ public class OrderFragment extends Fragment {
                 NavHostFragment.findNavController(OrderFragment.this)
                         .navigate(R.id.action_orderFragment_to_detailsFragment, bundle);
             }
-        });
+        },prefs.getString("currency", null));
 
         rvOrderItems.setAdapter(productAdapter);
     }
@@ -121,12 +125,11 @@ public class OrderFragment extends Fragment {
 
     private void updateTotalPrice(List<OrderItem> orderItems) {
         double total = 0;
-        String currency = "AED";
+        String currency = prefs.getString("currency", null);
 
         if (orderItems != null) {
             for (OrderItem item : orderItems) {
                 total += item.getProduct().getPrice() * item.getQuantity();
-                currency = item.getProduct().getCurrency();
             }
         }
 

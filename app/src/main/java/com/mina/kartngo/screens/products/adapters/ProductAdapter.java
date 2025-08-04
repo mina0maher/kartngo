@@ -1,5 +1,9 @@
 package com.mina.kartngo.screens.products.adapters;
 
+import static com.mina.kartngo.screens.utils.Helpers.decodeBase64ToBitmap;
+
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +26,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     private List<Product> productList = new ArrayList<>();
     private List<OrderItem> currentOrderList = new ArrayList<>();
     private OnProductActionListener listener;
+    private String currency;
 
-    public ProductAdapter(OnProductActionListener listener) {
+    public ProductAdapter(OnProductActionListener listener, String currency) {
         this.listener = listener;
+        this.currency = currency;
     }
 
     public void setProducts(List<Product> products) {
@@ -49,7 +55,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         Product product = productList.get(position);
 
         holder.textTitle.setText(product.getName());
-        holder.textPrice.setText(product.getPrice() + " " + product.getCurrency());
+        holder.textPrice.setText(product.getPrice() + " " + currency);
 
         int quantity = 0;
         for (OrderItem item : currentOrderList) {
@@ -59,10 +65,17 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             }
         }
         holder.textCount.setText(String.valueOf(quantity));
+        Log.d("hi from Adapter","  "+product.getImage());
+        Bitmap bitmap = decodeBase64ToBitmap(product.getImage());
+        if (bitmap != null) {
+            Glide.with(holder.imgProduct.getContext())
+                    .load(bitmap)
+                    .into(holder.imgProduct);
+        } else {
+            holder.imgProduct.setImageResource(R.drawable.logo);
+        }
 
-        Glide.with(holder.imgProduct.getContext())
-                .load(product.getImageUrl())
-                .into(holder.imgProduct);
+
 
         holder.buttonPlus.setOnClickListener(v -> listener.onIncreaseClicked(product));
         holder.buttonMinus.setOnClickListener(v -> listener.onDecreaseClicked(product));

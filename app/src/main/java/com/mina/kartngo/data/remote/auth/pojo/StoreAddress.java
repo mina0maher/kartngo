@@ -1,4 +1,4 @@
-package com.mina.kartngo.data.remote.entites.auth;
+package com.mina.kartngo.data.remote.auth.pojo;
 
 public class StoreAddress {
     private String addressID;

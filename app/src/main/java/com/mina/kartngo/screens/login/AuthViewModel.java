@@ -5,8 +5,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.mina.kartngo.data.remote.auth.AuthRepository;
-import com.mina.kartngo.data.remote.entites.auth.AssignStoreAndBringPropertiesResponse;
-import com.mina.kartngo.data.remote.entites.auth.LoginResponse;
+import com.mina.kartngo.data.remote.auth.pojo.AssignStoreAndBringPropertiesResponse;
+import com.mina.kartngo.data.remote.auth.pojo.LoginResponse;
 import com.mina.kartngo.data.util.Result;
 
 public class AuthViewModel extends ViewModel {

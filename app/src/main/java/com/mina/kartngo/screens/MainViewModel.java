@@ -7,8 +7,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.mina.kartngo.data.local.ProductRepository;
-
+import com.mina.kartngo.data.remote.entites.ProductRepository;
+import com.mina.kartngo.data.remote.entites.ProductsApi;
 import com.mina.kartngo.models.OrderItem;
 import com.mina.kartngo.models.Product;
 
@@ -18,31 +18,20 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+
 public class MainViewModel extends AndroidViewModel {
     private final ProductRepository repository;
-    private final LiveData<List<Product>> productsLiveData;
+    private final MutableLiveData<List<Product>> productsLiveData = new MutableLiveData<>();
     private final MutableLiveData<List<OrderItem>> currentOrderLiveData = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<String>> categoriesLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> selectedCategoryLiveData = new MutableLiveData<>(null);
     private final MediatorLiveData<List<Product>> filteredProductsLiveData = new MediatorLiveData<>();
     private final MutableLiveData<String> searchQueryLiveData = new MutableLiveData<>("");
 
-    public void setSearchQuery(String query) {
-        searchQueryLiveData.setValue(query);
-    }
-
-    public void clearSearchQuery() {
-        searchQueryLiveData.setValue("");
-    }
-
-    public LiveData<String> getSearchQueryLiveData() {
-        return searchQueryLiveData;
-    }
-    public MainViewModel(Application application) {
+    public MainViewModel(Application application, ProductsApi productsApi) {
         super(application);
-        repository = new ProductRepository(application);
-        productsLiveData = repository.getAllProducts();
-
+        repository = new ProductRepository(productsApi);
+        repository.fetchProducts("ar",20, 0, productsLiveData);
 
         productsLiveData.observeForever(products -> {
             if (products != null) {
@@ -56,21 +45,9 @@ public class MainViewModel extends AndroidViewModel {
             }
         });
 
-             filteredProductsLiveData.addSource(productsLiveData, products -> filterProducts());
+        filteredProductsLiveData.addSource(productsLiveData, products -> filterProducts());
         filteredProductsLiveData.addSource(selectedCategoryLiveData, category -> filterProducts());
         filteredProductsLiveData.addSource(searchQueryLiveData, s -> filterProducts());
-
-    }
-    public Product getProductById(int id) {
-        List<Product> allProducts = productsLiveData.getValue();
-        if (allProducts != null) {
-            for (Product product : allProducts) {
-                if (product.getId()==id) {
-                    return product;
-                }
-            }
-        }
-        return null;
     }
 
     private void filterProducts() {
@@ -94,7 +71,29 @@ public class MainViewModel extends AndroidViewModel {
         filteredProductsLiveData.setValue(filtered);
     }
 
+    public void setSearchQuery(String query) {
+        searchQueryLiveData.setValue(query);
+    }
 
+    public void clearSearchQuery() {
+        searchQueryLiveData.setValue("");
+    }
+
+    public LiveData<String> getSearchQueryLiveData() {
+        return searchQueryLiveData;
+    }
+
+    public Product getProductById(int id) {
+        List<Product> allProducts = productsLiveData.getValue();
+        if (allProducts != null) {
+            for (Product product : allProducts) {
+                if (product.getId() == id) {
+                    return product;
+                }
+            }
+        }
+        return null;
+    }
 
     public LiveData<List<Product>> getFilteredProductsLiveData() {
         return filteredProductsLiveData;
@@ -152,7 +151,6 @@ public class MainViewModel extends AndroidViewModel {
     public void clearOrder() {
         currentOrderLiveData.setValue(new ArrayList<>());
     }
-
 
     private int findOrderItemIndex(List<OrderItem> orderItems, Product product) {
         for (int i = 0; i < orderItems.size(); i++) {

@@ -1,8 +1,8 @@
 package com.mina.kartngo.data.remote.auth;
 
-import com.mina.kartngo.data.remote.entites.auth.AssignStoreAndBringPropertiesRequest;
-import com.mina.kartngo.data.remote.entites.auth.AssignStoreAndBringPropertiesResponse;
-import com.mina.kartngo.data.remote.entites.auth.LoginResponse;
+import com.mina.kartngo.data.remote.auth.pojo.AssignStoreAndBringPropertiesRequest;
+import com.mina.kartngo.data.remote.auth.pojo.AssignStoreAndBringPropertiesResponse;
+import com.mina.kartngo.data.remote.auth.pojo.LoginResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

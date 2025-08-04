@@ -1,5 +1,7 @@
 package com.mina.kartngo.screens.details;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -29,6 +31,7 @@ public class DetailsFragment extends Fragment {
 
     private int productId;
     private Product product;
+    private  SharedPreferences prefs;
 
     public DetailsFragment() {}
 
@@ -41,6 +44,7 @@ public class DetailsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
 
         ivImage = view.findViewById(R.id.imgProduct);
         btnBack = view.findViewById(R.id.btnBack);
@@ -57,11 +61,11 @@ public class DetailsFragment extends Fragment {
 
             if (product != null) {
                 Glide.with(requireContext())
-                        .load(product.getImageUrl())
+                        .load(product.getImage())
                         .into(ivImage);
 
                 tvName.setText(product.getName());
-                tvPrice.setText(product.getPrice() + " " + product.getCurrency());
+                tvPrice.setText(product.getPrice() + " " + prefs.getString("currency", null));
                 tvCategory.setText(product.getCategory());
                 tvDescription.setText(product.getDetails());
             }

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.mina.kartngo.data.remote.auth.AuthApi;
 import com.mina.kartngo.data.remote.auth.AuthInterceptor;
+import com.mina.kartngo.data.remote.entites.ProductsApi;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -29,5 +30,9 @@ public class ApiClient {
     }
     public static AuthApi getAuthApi(Context context) {
         return getClient(context).create(AuthApi.class);
+    }
+
+    public static ProductsApi getProductsApi(Context context) {
+        return getClient(context).create(ProductsApi.class);
     }
 }

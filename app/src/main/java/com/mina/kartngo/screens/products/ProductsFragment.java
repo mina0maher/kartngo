@@ -2,6 +2,8 @@ package com.mina.kartngo.screens.products;
 
 import static com.mina.kartngo.screens.utils.ToastUtils.showToast;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -23,6 +25,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mina.kartngo.R;
+import com.mina.kartngo.data.remote.ApiClient;
+import com.mina.kartngo.data.remote.entites.ProductsApi;
 import com.mina.kartngo.models.Product;
 import com.mina.kartngo.models.OrderItem;
 import com.mina.kartngo.screens.MainViewModel;
@@ -30,6 +34,7 @@ import com.mina.kartngo.screens.products.adapters.CategoriesAdapter;
 import com.mina.kartngo.screens.products.adapters.ProductAdapter;
 import com.mina.kartngo.screens.products.listeneres.OnCategoryClickListener;
 import com.mina.kartngo.screens.products.listeneres.OnProductActionListener;
+import com.mina.kartngo.screens.utils.ViewModelFactory;
 
 public class ProductsFragment extends Fragment {
 
@@ -41,10 +46,10 @@ public class ProductsFragment extends Fragment {
     private EditText etSearch;
     private ImageView ivFilter, ivClearFilter;
     private CardView btnViewCart;
-    private TextView tvTotalPrice,tvCurrency;
+    private TextView tvTotalPrice, tvCurrency;
+    private SharedPreferences prefs;
 
-    public ProductsFragment() {
-    }
+    public ProductsFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,7 +60,17 @@ public class ProductsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
 
+        initViews(view);
+        setupViewModel();
+        setupCategoryRecycler();
+        setupProductRecycler();
+        observeData();
+        setListeners();
+    }
+
+    private void initViews(View view) {
         filterContainer = view.findViewById(R.id.filterContainer);
         etSearch = view.findViewById(R.id.etSearch);
         ivFilter = view.findViewById(R.id.ivFilter);
@@ -65,16 +80,14 @@ public class ProductsFragment extends Fragment {
         tvCurrency = view.findViewById(R.id.tvCurrency);
         recyclerProducts = view.findViewById(R.id.rvProducts);
         recyclerCategories = view.findViewById(R.id.rvCategories);
-
-        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
-
-        setupCategoryRecycler();
-        setupProductRecycler();
-        observeData();
-        setListeners();
     }
 
-    private void setListeners(){
+    private void setupViewModel() {
+        ProductsApi api = ApiClient.getProductsApi(requireContext());
+        viewModel = new ViewModelProvider(requireActivity(), new ViewModelFactory(requireActivity().getApplication(), api)).get(MainViewModel.class);
+    }
+
+    private void setListeners() {
         ivFilter.setOnClickListener(v -> {
             if (filterContainer.getVisibility() == View.GONE) {
                 filterContainer.setVisibility(View.VISIBLE);
@@ -93,26 +106,19 @@ public class ProductsFragment extends Fragment {
         });
 
         etSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
                 viewModel.setSearchQuery(s.toString());
             }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
+            @Override public void afterTextChanged(Editable s) {}
         });
 
-            btnViewCart.setOnClickListener(v -> {
-
-                NavHostFragment.findNavController(ProductsFragment.this)
-                        .navigate(R.id.action_productsFragment_to_orderFragment);
-            });
-
-
+        btnViewCart.setOnClickListener(v -> {
+            NavHostFragment.findNavController(ProductsFragment.this)
+                    .navigate(R.id.action_productsFragment_to_orderFragment);
+        });
     }
+
     private void setupCategoryRecycler() {
         recyclerCategories.setLayoutManager(
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -150,7 +156,7 @@ public class ProductsFragment extends Fragment {
                 NavHostFragment.findNavController(ProductsFragment.this)
                         .navigate(R.id.action_productsFragment_to_detailsFragment, bundle);
             }
-        });
+        },prefs.getString("currency", null));
 
         recyclerProducts.setAdapter(productAdapter);
     }
@@ -169,11 +175,6 @@ public class ProductsFragment extends Fragment {
 
         viewModel.getCurrentOrderLiveData().observe(getViewLifecycleOwner(), orderItems -> {
             productAdapter.setOrderItems(orderItems);
-        });
-
-
-        viewModel.getCurrentOrderLiveData().observe(getViewLifecycleOwner(), orderItems -> {
-            productAdapter.setOrderItems(orderItems);
 
             if (orderItems != null && !orderItems.isEmpty()) {
                 btnViewCart.setVisibility(View.VISIBLE);
@@ -183,14 +184,12 @@ public class ProductsFragment extends Fragment {
                     total += item.getQuantity() * item.getProduct().getPrice();
                 }
 
-                String text = String.format("%.2f", total) ;
-                tvCurrency.setText(orderItems.get(0).getProduct().getCurrency());
+                String text = String.format("%.2f", total);
+                tvCurrency.setText(prefs.getString("currency", null));
                 tvTotalPrice.setText(text);
-
             } else {
                 btnViewCart.setVisibility(View.GONE);
             }
         });
-
     }
 }
