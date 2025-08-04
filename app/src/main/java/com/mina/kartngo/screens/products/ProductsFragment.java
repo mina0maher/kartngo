@@ -135,7 +135,8 @@ public class ProductsFragment extends Fragment {
     }
 
     private void setupProductRecycler() {
-        recyclerProducts.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
+        recyclerProducts.setLayoutManager(layoutManager);
 
         productAdapter = new ProductAdapter(new OnProductActionListener() {
             @Override
@@ -158,7 +159,27 @@ public class ProductsFragment extends Fragment {
         }, prefs.getString("currency", null));
 
         recyclerProducts.setAdapter(productAdapter);
+
+        // SCROLL LISTENER FOR PAGINATION
+        recyclerProducts.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                if (!Boolean.TRUE.equals(viewModel.getIsLoading().getValue())) {
+                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                            && firstVisibleItemPosition >= 0) {
+                        viewModel.loadNextPage(); // load more data
+                    }
+                }
+            }
+        });
     }
+
 
     private void observeData() {
         viewModel.getCategoriesLiveData().observe(getViewLifecycleOwner(), categories -> {

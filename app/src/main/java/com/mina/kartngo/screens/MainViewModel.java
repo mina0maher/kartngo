@@ -17,21 +17,28 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
-
 public class MainViewModel extends AndroidViewModel {
+
     private final ProductRepository repository;
-    private final MutableLiveData<List<Product>> productsLiveData = new MutableLiveData<>();
+
+    private final MutableLiveData<List<Product>> productsLiveData = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isLastPage = new MutableLiveData<>(false);
+
     private final MutableLiveData<List<OrderItem>> currentOrderLiveData = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<String>> categoriesLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> selectedCategoryLiveData = new MutableLiveData<>(null);
     private final MediatorLiveData<List<Product>> filteredProductsLiveData = new MediatorLiveData<>();
     private final MutableLiveData<String> searchQueryLiveData = new MutableLiveData<>("");
 
+    private int currentStart = 0;
+    private static final int PAGE_SIZE = 20;
+    private String currentLanguage = "ar"; // default
+
     public MainViewModel(Application application, ProductsApi productsApi) {
         super(application);
         repository = new ProductRepository(productsApi);
-        repository.fetchProducts("ar",20, 0, productsLiveData);
+        loadNextPage();
 
         productsLiveData.observeForever(products -> {
             if (products != null) {
@@ -48,6 +55,28 @@ public class MainViewModel extends AndroidViewModel {
         filteredProductsLiveData.addSource(productsLiveData, products -> filterProducts());
         filteredProductsLiveData.addSource(selectedCategoryLiveData, category -> filterProducts());
         filteredProductsLiveData.addSource(searchQueryLiveData, s -> filterProducts());
+    }
+
+    public void loadNextPage() {
+        if (Boolean.TRUE.equals(isLoading.getValue()) || Boolean.TRUE.equals(isLastPage.getValue())) return;
+
+        isLoading.setValue(true);
+
+        repository.fetchProducts(currentLanguage, PAGE_SIZE, currentStart, new MutableLiveData<List<Product>>() {
+            @Override
+            public void postValue(List<Product> newProducts) {
+                if (newProducts == null || newProducts.isEmpty()) {
+                    isLastPage.postValue(true);
+                } else {
+                    List<Product> currentList = productsLiveData.getValue();
+                    if (currentList == null) currentList = new ArrayList<>();
+                    currentList.addAll(newProducts);
+                    productsLiveData.postValue(currentList);
+                    currentStart += PAGE_SIZE;
+                }
+                isLoading.postValue(false);
+            }
+        });
     }
 
     private void filterProducts() {
@@ -69,6 +98,13 @@ public class MainViewModel extends AndroidViewModel {
             }
         }
         filteredProductsLiveData.setValue(filtered);
+    }
+
+    public void resetPagination() {
+        currentStart = 0;
+        isLastPage.setValue(false);
+        productsLiveData.setValue(new ArrayList<>());
+        loadNextPage();
     }
 
     public void setSearchQuery(String query) {
@@ -111,15 +147,13 @@ public class MainViewModel extends AndroidViewModel {
         return productsLiveData;
     }
 
-    public LiveData<List<OrderItem>> getCurrentOrderLiveData() {
-        return currentOrderLiveData;
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
     }
 
     public void addProductToOrder(Product product) {
         List<OrderItem> currentOrder = currentOrderLiveData.getValue();
-        if (currentOrder == null) {
-            currentOrder = new ArrayList<>();
-        }
+        if (currentOrder == null) currentOrder = new ArrayList<>();
 
         int index = findOrderItemIndex(currentOrder, product);
         if (index >= 0) {
@@ -146,6 +180,10 @@ public class MainViewModel extends AndroidViewModel {
             }
             currentOrderLiveData.setValue(currentOrder);
         }
+    }
+
+    public LiveData<List<OrderItem>> getCurrentOrderLiveData() {
+        return currentOrderLiveData;
     }
 
     public void clearOrder() {

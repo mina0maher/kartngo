@@ -26,6 +26,7 @@ import java.util.List;
 
 public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductViewHolder> {
 
+    private final List<Product> fullProductList = new ArrayList<>();
     private List<OrderItem> currentOrderList = new ArrayList<>();
     private final OnProductActionListener listener;
     private final String currency;
@@ -41,7 +42,31 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
 
     public void setOrderItems(List<OrderItem> orderItems) {
         this.currentOrderList = orderItems != null ? orderItems : new ArrayList<>();
-        notifyDataSetChanged(); // optional: remove if you diff order list separately
+        notifyDataSetChanged();
+    }
+
+    // ✅ تستخدمها لأول تحميل أو لإعادة التحميل من أول وجديد
+    public void setProducts(List<Product> products) {
+        fullProductList.clear();
+        if (products != null) {
+            fullProductList.addAll(products);
+        }
+        submitList(new ArrayList<>(fullProductList));
+    }
+
+    // ✅ تستخدمها لما تجيب صفحة جديدة وتضيفها على اللي قبلها
+    public void addItems(List<Product> newProducts) {
+        if (newProducts != null && !newProducts.isEmpty()) {
+            int start = fullProductList.size();
+            fullProductList.addAll(newProducts);
+            submitList(new ArrayList<>(fullProductList));
+        }
+    }
+
+    // ✅ تستخدمها لو حبيت تمسح كل البيانات
+    public void clearItems() {
+        fullProductList.clear();
+        submitList(new ArrayList<>());
     }
 
     @NonNull
