@@ -70,7 +70,19 @@ public class MainViewModel extends AndroidViewModel {
                 } else {
                     List<Product> currentList = productsLiveData.getValue();
                     if (currentList == null) currentList = new ArrayList<>();
-                    currentList.addAll(newProducts);
+
+                    Set<Integer> existingIds = new LinkedHashSet<>();
+                    for (Product p : currentList) {
+                        existingIds.add(p.getId());
+                    }
+
+                    for (Product p : newProducts) {
+                        if (!existingIds.contains(p.getId())) {
+                            currentList.add(p);
+                            existingIds.add(p.getId());
+                        }
+                    }
+
                     productsLiveData.postValue(currentList);
                     currentStart += PAGE_SIZE;
                 }
@@ -78,6 +90,7 @@ public class MainViewModel extends AndroidViewModel {
             }
         });
     }
+
 
     private void filterProducts() {
         List<Product> allProducts = productsLiveData.getValue();

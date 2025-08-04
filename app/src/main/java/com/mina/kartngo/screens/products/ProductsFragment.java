@@ -190,7 +190,7 @@ public class ProductsFragment extends Fragment {
         });
 
         viewModel.getFilteredProductsLiveData().observe(getViewLifecycleOwner(), products -> {
-            productAdapter.submitList(products);
+            productAdapter.setProducts(products);
         });
 
         viewModel.getCurrentOrderLiveData().observe(getViewLifecycleOwner(), orderItems -> {

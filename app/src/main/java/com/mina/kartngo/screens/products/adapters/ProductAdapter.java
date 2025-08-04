@@ -46,12 +46,15 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
     }
 
     // ✅ تستخدمها لأول تحميل أو لإعادة التحميل من أول وجديد
-    public void setProducts(List<Product> products) {
-        fullProductList.clear();
-        if (products != null) {
-            fullProductList.addAll(products);
+    public void setProducts(List<Product> newProducts) {
+        if (newProducts == null) {
+            submitList(new ArrayList<>());
+            return;
         }
-        submitList(new ArrayList<>(fullProductList));
+
+        if (!newProducts.equals(getCurrentList())) {
+            submitList(new ArrayList<>(newProducts)); // DiffUtil يشتغل لكن بأقل ضرر
+        }
     }
 
     // ✅ تستخدمها لما تجيب صفحة جديدة وتضيفها على اللي قبلها

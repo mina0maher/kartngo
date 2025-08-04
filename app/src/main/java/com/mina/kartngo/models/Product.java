@@ -7,9 +7,6 @@ public class Product {
     private String image;
     private String category;
     private double price;
-
-
-
     private String details;
 
     public Product(int id, String name, String image, String category, double price, String details) {
@@ -69,5 +66,13 @@ public class Product {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return id == product.id;
     }
 }
