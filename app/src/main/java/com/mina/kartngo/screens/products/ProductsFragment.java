@@ -1,6 +1,5 @@
 package com.mina.kartngo.screens.products;
 
-import static com.mina.kartngo.screens.utils.ToastUtils.showToast;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -35,6 +34,8 @@ import com.mina.kartngo.screens.products.adapters.ProductAdapter;
 import com.mina.kartngo.screens.products.listeneres.OnCategoryClickListener;
 import com.mina.kartngo.screens.products.listeneres.OnProductActionListener;
 import com.mina.kartngo.screens.utils.ViewModelFactory;
+
+import java.util.ArrayList;
 
 public class ProductsFragment extends Fragment {
 
@@ -84,7 +85,10 @@ public class ProductsFragment extends Fragment {
 
     private void setupViewModel() {
         ProductsApi api = ApiClient.getProductsApi(requireContext());
-        viewModel = new ViewModelProvider(requireActivity(), new ViewModelFactory(requireActivity().getApplication(), api)).get(MainViewModel.class);
+        viewModel = new ViewModelProvider(
+                requireActivity(),
+                new ViewModelFactory(requireActivity().getApplication(), api)
+        ).get(MainViewModel.class);
     }
 
     private void setListeners() {
@@ -123,21 +127,16 @@ public class ProductsFragment extends Fragment {
         recyclerCategories.setLayoutManager(
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        categoriesAdapter = new CategoriesAdapter(
-                new java.util.ArrayList<>(),
-                new OnCategoryClickListener() {
-                    @Override
-                    public void onCategoryClick(String category) {
-                        viewModel.setSelectedCategory(category);
-                    }
-                });
+        categoriesAdapter = new CategoriesAdapter(new ArrayList<>(), category -> {
+            viewModel.setSelectedCategory(category);
+        });
 
         recyclerCategories.setAdapter(categoriesAdapter);
     }
 
     private void setupProductRecycler() {
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
-        recyclerProducts.setLayoutManager(layoutManager);
+        recyclerProducts.setLayoutManager(new GridLayoutManager(getContext(), 2));
+
         productAdapter = new ProductAdapter(new OnProductActionListener() {
             @Override
             public void onIncreaseClicked(Product product) {
@@ -156,7 +155,7 @@ public class ProductsFragment extends Fragment {
                 NavHostFragment.findNavController(ProductsFragment.this)
                         .navigate(R.id.action_productsFragment_to_detailsFragment, bundle);
             }
-        },prefs.getString("currency", null));
+        }, prefs.getString("currency", null));
 
         recyclerProducts.setAdapter(productAdapter);
     }
@@ -170,7 +169,7 @@ public class ProductsFragment extends Fragment {
         });
 
         viewModel.getFilteredProductsLiveData().observe(getViewLifecycleOwner(), products -> {
-            productAdapter.setProducts(products);
+            productAdapter.submitList(products);
         });
 
         viewModel.getCurrentOrderLiveData().observe(getViewLifecycleOwner(), orderItems -> {

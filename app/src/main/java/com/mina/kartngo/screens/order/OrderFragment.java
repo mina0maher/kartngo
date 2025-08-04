@@ -116,7 +116,7 @@ public class OrderFragment extends Fragment {
                 orderedProducts.add(item.getProduct());
             }
 
-            productAdapter.setProducts(orderedProducts);
+            productAdapter.submitList(orderedProducts);
             productAdapter.setOrderItems(orderItems);
 
             updateTotalPrice(orderItems);
