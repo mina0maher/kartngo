@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.mina.kartngo.data.local.resources.ResourceRepository;
 import com.mina.kartngo.data.remote.products.ProductsRepository;
 import com.mina.kartngo.data.remote.products.ProductsApi;
 import com.mina.kartngo.models.OrderItem;
@@ -35,9 +36,9 @@ public class MainViewModel extends AndroidViewModel {
     private static final int PAGE_SIZE = 20;
     private String currentLanguage = "ar"; // default
 
-    public MainViewModel(Application application, ProductsApi productsApi) {
+    public MainViewModel(Application application,  ProductsRepository repository) {
         super(application);
-        repository = new ProductsRepository(productsApi);
+        this.repository = repository;
         loadNextPage();
 
         productsLiveData.observeForever(products -> {

@@ -18,8 +18,13 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.mina.kartngo.R;
+import com.mina.kartngo.data.local.resources.ResourceRepository;
+import com.mina.kartngo.data.remote.ApiClient;
+import com.mina.kartngo.data.remote.products.ProductsApi;
+import com.mina.kartngo.data.remote.products.ProductsRepository;
 import com.mina.kartngo.models.Product;
 import com.mina.kartngo.screens.MainViewModel;
+import com.mina.kartngo.screens.utils.ViewModelFactory;
 
 public class DetailsFragment extends Fragment {
 
@@ -53,7 +58,7 @@ public class DetailsFragment extends Fragment {
         tvCategory = view.findViewById(R.id.tvCategory);
         tvDescription = view.findViewById(R.id.tvDescription);
 
-        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+        setupViewModel();
 
         if (getArguments() != null) {
             productId = getArguments().getString(ARG_PRODUCT_ID);
@@ -74,5 +79,14 @@ public class DetailsFragment extends Fragment {
         btnBack.setOnClickListener(v ->
                 NavHostFragment.findNavController(DetailsFragment.this).navigateUp()
         );
+    }
+    private void setupViewModel() {
+        ProductsApi productsApi = ApiClient.getProductsApi(requireContext());
+        ResourceRepository resourceRepository = new ResourceRepository(requireContext());
+        ProductsRepository productsRepository = new ProductsRepository(productsApi,resourceRepository);
+        viewModel = new ViewModelProvider(
+                requireActivity(),
+                new ViewModelFactory(requireActivity().getApplication(),productsRepository )
+        ).get(MainViewModel.class);
     }
 }

@@ -1,5 +1,7 @@
 package com.mina.kartngo.screens.login;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +25,9 @@ import com.mina.kartngo.data.util.Result;
 import com.mina.kartngo.screens.utils.ViewModelFactory;
 
 public class LoginFragment extends Fragment {
+    private static final String PREF_NAME = "app_prefs";
+    private static final String KEY_USERNAME = "username";
+    private static final String KEY_PASSWORD = "password";
 
     private AuthViewModel viewModel;
 
@@ -46,6 +51,15 @@ public class LoginFragment extends Fragment {
 
         setupViewModel();
 
+        // SharedPreferences
+        SharedPreferences prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        String savedUsername = prefs.getString(KEY_USERNAME, null);
+        String savedPassword = prefs.getString(KEY_PASSWORD, null);
+
+        if (savedUsername != null && savedPassword != null) {
+            loginAndNavigate(savedUsername, savedPassword, false); // false = لا تحفظ تاني
+        }
+
         btnLogin.setOnClickListener(v -> {
             String username = etUsername.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
@@ -55,34 +69,46 @@ public class LoginFragment extends Fragment {
                 return;
             }
 
-            viewModel.login(username, password).observe(getViewLifecycleOwner(), result -> {
-                if (result instanceof Result.Success) {
-                    Toast.makeText(requireContext(), "تم تسجيل الدخول بنجاح", Toast.LENGTH_SHORT).show();
-
-                    // Call assignStoreAndBringProperties
-                    viewModel.assignStore(HARDCODED_STORE_ID)
-                            .observe(getViewLifecycleOwner(), assignResult -> {
-                                if (assignResult instanceof Result.Success) {
-                                    Toast.makeText(requireContext(), "Assigned to store", Toast.LENGTH_SHORT).show();
-
-                                    NavOptions navOptions = new NavOptions.Builder()
-                                            .setPopUpTo(R.id.loginFragment, true) // Clear back stack
-                                            .build();
-
-                                    NavHostFragment.findNavController(this)
-                                            .navigate(R.id.action_loginFragment_to_productsFragment, null, navOptions);
-                                } else if (assignResult instanceof Result.Error) {
-                                    Toast.makeText(requireContext(),  ((Result.Error<?>) assignResult).getMessage(), Toast.LENGTH_SHORT).show();
-                                    Log.d("API_LOG",((Result.Error<?>) assignResult).getMessage());
-                                }
-                            });
-
-                } else if (result instanceof Result.Error) {
-                    Toast.makeText(requireContext(), ((Result.Error<?>) result).getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
+            loginAndNavigate(username, password, true); // true = احفظ البيانات بعد تسجيل الدخول
         });
     }
+
+    private void loginAndNavigate(String username, String password, boolean shouldSaveCredentials) {
+        viewModel.login(username, password).observe(getViewLifecycleOwner(), result -> {
+            if (result instanceof Result.Success) {
+                Toast.makeText(requireContext(), "تم تسجيل الدخول بنجاح", Toast.LENGTH_SHORT).show();
+
+                if (shouldSaveCredentials) {
+                    SharedPreferences prefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+                    prefs.edit()
+                            .putString(KEY_USERNAME, username)
+                            .putString(KEY_PASSWORD, password)
+                            .apply();
+                }
+
+                viewModel.assignStore(HARDCODED_STORE_ID)
+                        .observe(getViewLifecycleOwner(), assignResult -> {
+                            if (assignResult instanceof Result.Success) {
+                                Toast.makeText(requireContext(), "تم الإسناد للمتجر", Toast.LENGTH_SHORT).show();
+
+                                NavOptions navOptions = new NavOptions.Builder()
+                                        .setPopUpTo(R.id.loginFragment, true)
+                                        .build();
+
+                                NavHostFragment.findNavController(this)
+                                        .navigate(R.id.action_loginFragment_to_productsFragment, null, navOptions);
+                            } else if (assignResult instanceof Result.Error) {
+                                Toast.makeText(requireContext(), ((Result.Error<?>) assignResult).getMessage(), Toast.LENGTH_SHORT).show();
+                                Log.d("API_LOG", ((Result.Error<?>) assignResult).getMessage());
+                            }
+                        });
+
+            } else if (result instanceof Result.Error) {
+                Toast.makeText(requireContext(), ((Result.Error<?>) result).getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     private void setupViewModel() {
         AuthRepository repository = new AuthRepository(ApiClient.getAuthApi(requireContext()), requireContext());

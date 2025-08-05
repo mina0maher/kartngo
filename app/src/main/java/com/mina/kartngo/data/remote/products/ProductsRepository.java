@@ -2,10 +2,12 @@ package com.mina.kartngo.data.remote.products;
 
 import static com.mina.kartngo.data.util.Helpers.parseLocalizedString;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.mina.kartngo.data.local.resources.ResourceRepository;
 import com.mina.kartngo.data.remote.products.pojo.DetailedProduct;
 import com.mina.kartngo.data.remote.products.pojo.GetAllProductsRequest;
 import com.mina.kartngo.data.remote.products.pojo.Hashx;
@@ -24,23 +26,25 @@ import retrofit2.Response;
 public class ProductsRepository {
 
     private final ProductsApi productsApi;
-    public ProductsRepository(ProductsApi productsApi) {
+    private final ResourceRepository resourceRepository;
+    public ProductsRepository(ProductsApi productsApi, ResourceRepository resourceRepository) {
         this.productsApi = productsApi;
+        this.resourceRepository = resourceRepository;
     }
     
-    public void fetchImage(String imageId){
-        productsApi.getResource(new ImageRequest(imageId)).enqueue(new Callback<ImageResponse>() {
-            @Override
-            public void onResponse(Call<ImageResponse> call, Response<ImageResponse> response) {
-                String base64Data = response.body().getResource().getHashx().getBase64Data();
-            }
-
-            @Override
-            public void onFailure(Call<ImageResponse> call, Throwable t) {
-
-            }
-        });
-    }
+//    public void fetchImage(String imageId){
+//        productsApi.getResource(new ImageRequest(imageId)).enqueue(new Callback<ImageResponse>() {
+//            @Override
+//            public void onResponse(Call<ImageResponse> call, Response<ImageResponse> response) {
+//                String base64Data = response.body().getResource().getHashx().getBase64Data();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ImageResponse> call, Throwable t) {
+//
+//            }
+//        });
+//    }
     public void fetchProducts(String language, int size, int start, MutableLiveData<List<Product>> liveData) {
         GetAllProductsRequest request = new GetAllProductsRequest(size, start);
         productsApi.getAllProducts(request).enqueue(new Callback<ProductsResponse>() {
@@ -51,29 +55,40 @@ public class ProductsRepository {
                     List<Product> mappedList = mapToUiProducts(language, rawList);
                     liveData.postValue(mappedList); // Step 1: Show products without image
 
-                    // Step 2: fetch images asynchronously
                     for (int i = 0; i < rawList.size(); i++) {
                         int index = i;
                         String imageId = rawList.get(index).getAvatar();
 
                         if (imageId != null && !imageId.isEmpty()) {
-                            productsApi.getResource(new ImageRequest(imageId)).enqueue(new Callback<ImageResponse>() {
+                            resourceRepository.getResourceByIdAsync(imageId, new ResourceRepository.ResourceCallback() {
                                 @Override
-                                public void onResponse(Call<ImageResponse> call, Response<ImageResponse> response) {
-                                    if (response.isSuccessful() && response.body() != null) {
-                                        Hashx hashx = response.body().getResource().getHashx();
-                                        if (hashx != null && hashx.getBase64Data() != null) {
-                                            Log.d("hi from repository","    "+hashx.getBase64Data());
-                                            String base64 = hashx.getBase64Data();
-                                            mappedList.get(index).setImage(base64);
-                                            liveData.postValue(new ArrayList<>(mappedList)); // re-post updated list
-                                        }
-                                    }
+                                public void onLoaded(String base64Data) {
+                                    mappedList.get(index).setImage(base64Data);
+                                    liveData.postValue(new ArrayList<>(mappedList)); // Update with cached image
                                 }
 
                                 @Override
-                                public void onFailure(Call<ImageResponse> call, Throwable t) {
-                                    // Ignore individual image failure
+                                public void onNotFound() {
+                                    productsApi.getResource(new ImageRequest(imageId)).enqueue(new Callback<ImageResponse>() {
+                                        @Override
+                                        public void onResponse(Call<ImageResponse> call, Response<ImageResponse> response) {
+                                            if (response.isSuccessful() && response.body() != null) {
+                                                Hashx hashx = response.body().getResource().getHashx();
+                                                if (hashx != null && hashx.getBase64Data() != null) {
+                                                    String base64 = hashx.getBase64Data();
+                                                    mappedList.get(index).setImage(base64);
+                                                    liveData.postValue(new ArrayList<>(mappedList)); // Update with new image
+
+                                                    resourceRepository.insertResourceAsync(imageId, base64); // Cache it
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<ImageResponse> call, Throwable t) {
+                                            // Ignore image fetch failure
+                                        }
+                                    });
                                 }
                             });
                         }

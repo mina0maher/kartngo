@@ -1,4 +1,4 @@
-package com.mina.kartngo.data.local;
+package com.mina.kartngo.data.local.products;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;

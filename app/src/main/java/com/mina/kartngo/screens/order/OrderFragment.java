@@ -22,12 +22,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mina.kartngo.R;
+import com.mina.kartngo.data.local.resources.ResourceRepository;
+import com.mina.kartngo.data.remote.ApiClient;
+import com.mina.kartngo.data.remote.products.ProductsApi;
+import com.mina.kartngo.data.remote.products.ProductsRepository;
 import com.mina.kartngo.models.OrderItem;
 import com.mina.kartngo.models.Product;
 import com.mina.kartngo.screens.MainViewModel;
 import com.mina.kartngo.screens.products.ProductsFragment;
 import com.mina.kartngo.screens.products.adapters.ProductAdapter;
 import com.mina.kartngo.screens.products.listeneres.OnProductActionListener;
+import com.mina.kartngo.screens.utils.ViewModelFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +59,7 @@ public class OrderFragment extends Fragment {
 
         prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
 
-        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+        setupViewModel();
 
         rvOrderItems = view.findViewById(R.id.rvOrderItems);
         tvTotalPrice = view.findViewById(R.id.tvCartTotal);
@@ -75,6 +80,15 @@ public class OrderFragment extends Fragment {
             showToast(requireContext(), "تم تأكيد الطلب ✅");
             NavHostFragment.findNavController(OrderFragment.this).navigateUp();
         });
+    }
+    private void setupViewModel() {
+        ProductsApi productsApi = ApiClient.getProductsApi(requireContext());
+        ResourceRepository resourceRepository = new ResourceRepository(requireContext());
+        ProductsRepository productsRepository = new ProductsRepository(productsApi,resourceRepository);
+        viewModel = new ViewModelProvider(
+                requireActivity(),
+                new ViewModelFactory(requireActivity().getApplication(),productsRepository )
+        ).get(MainViewModel.class);
     }
 
     private void setupRecyclerView() {

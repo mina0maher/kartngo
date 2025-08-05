@@ -1,10 +1,11 @@
-package com.mina.kartngo.data.local;
+package com.mina.kartngo.data.local.products;
 
 import android.content.Context;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 
+import com.mina.kartngo.data.local.AppDatabase;
 import com.mina.kartngo.models.Product;
 
 import java.util.ArrayList;

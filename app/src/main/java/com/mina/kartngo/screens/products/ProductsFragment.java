@@ -24,8 +24,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mina.kartngo.R;
+import com.mina.kartngo.data.local.resources.ResourceRepository;
 import com.mina.kartngo.data.remote.ApiClient;
 import com.mina.kartngo.data.remote.products.ProductsApi;
+import com.mina.kartngo.data.remote.products.ProductsRepository;
 import com.mina.kartngo.models.Product;
 import com.mina.kartngo.models.OrderItem;
 import com.mina.kartngo.screens.MainViewModel;
@@ -83,10 +85,12 @@ public class ProductsFragment extends Fragment {
     }
 
     private void setupViewModel() {
-        ProductsApi api = ApiClient.getProductsApi(requireContext());
+        ProductsApi productsApi = ApiClient.getProductsApi(requireContext());
+        ResourceRepository resourceRepository = new ResourceRepository(requireContext());
+        ProductsRepository productsRepository = new ProductsRepository(productsApi,resourceRepository);
         viewModel = new ViewModelProvider(
                 requireActivity(),
-                new ViewModelFactory(requireActivity().getApplication(), api)
+                new ViewModelFactory(requireActivity().getApplication(),productsRepository )
         ).get(MainViewModel.class);
     }
 
