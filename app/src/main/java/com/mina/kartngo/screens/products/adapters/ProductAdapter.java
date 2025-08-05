@@ -24,6 +24,7 @@ import com.mina.kartngo.screens.utils.GenericDiffCallback;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductViewHolder> {
 
@@ -45,9 +46,8 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
 
     public void setOrderItems(List<OrderItem> orderItems) {
         this.currentOrderList = orderItems != null ? orderItems : new ArrayList<>();
-        // نعمل submitList لنفس الليست علشان يشتغل DiffUtil
-        submitList(new ArrayList<>(getCurrentList()));
     }
+
 
     public void setProducts(List<Product> newProducts) {
         fullProductList.clear();
@@ -84,8 +84,8 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         holder.textTitle.setText(product.getName());
         holder.textPrice.setText(product.getPrice() + " " + currency);
 
-        int quantity = getQuantityForProduct(product);
-        holder.textCount.setText(String.valueOf(quantity));
+        AtomicInteger quantity = new AtomicInteger(getQuantityForProduct(product));
+        holder.textCount.setText(String.valueOf(quantity.get()));
 
         Bitmap productBitmap = decodeBase64ToBitmap(product.getImage());
         if (productBitmap != null) {

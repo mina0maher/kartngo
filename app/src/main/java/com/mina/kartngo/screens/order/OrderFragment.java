@@ -127,7 +127,9 @@ public class OrderFragment extends Fragment {
 
             List<Product> orderedProducts = new ArrayList<>();
             for (OrderItem item : orderItems) {
-                orderedProducts.add(item.getProduct());
+                if (item.getQuantity() > 0) {
+                    orderedProducts.add(item.getProduct());
+                }
             }
 
             productAdapter.submitList(orderedProducts);
