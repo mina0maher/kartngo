@@ -25,13 +25,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.mina.kartngo.R;
 import com.mina.kartngo.data.remote.ApiClient;
-import com.mina.kartngo.data.remote.entites.ProductsApi;
+import com.mina.kartngo.data.remote.products.ProductsApi;
 import com.mina.kartngo.models.Product;
 import com.mina.kartngo.models.OrderItem;
 import com.mina.kartngo.screens.MainViewModel;
 import com.mina.kartngo.screens.products.adapters.CategoriesAdapter;
 import com.mina.kartngo.screens.products.adapters.ProductAdapter;
-import com.mina.kartngo.screens.products.listeneres.OnCategoryClickListener;
 import com.mina.kartngo.screens.products.listeneres.OnProductActionListener;
 import com.mina.kartngo.screens.utils.ViewModelFactory;
 

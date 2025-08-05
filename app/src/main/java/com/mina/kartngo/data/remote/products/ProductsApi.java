@@ -1,9 +1,9 @@
-package com.mina.kartngo.data.remote.entites;
+package com.mina.kartngo.data.remote.products;
 
-import com.mina.kartngo.data.remote.entites.pojo.GetAllProductsRequest;
-import com.mina.kartngo.data.remote.entites.pojo.ImageRequest;
-import com.mina.kartngo.data.remote.entites.pojo.ImageResponse;
-import com.mina.kartngo.data.remote.entites.pojo.ProductsResponse;
+import com.mina.kartngo.data.remote.products.pojo.GetAllProductsRequest;
+import com.mina.kartngo.data.remote.products.pojo.ImageRequest;
+import com.mina.kartngo.data.remote.products.pojo.ImageResponse;
+import com.mina.kartngo.data.remote.products.pojo.ProductsResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

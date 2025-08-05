@@ -1,4 +1,4 @@
-package com.mina.kartngo.data.remote.entites;
+package com.mina.kartngo.data.remote.products;
 
 import static com.mina.kartngo.data.util.Helpers.parseLocalizedString;
 
@@ -6,12 +6,12 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.mina.kartngo.data.remote.entites.pojo.DetailedProduct;
-import com.mina.kartngo.data.remote.entites.pojo.GetAllProductsRequest;
-import com.mina.kartngo.data.remote.entites.pojo.Hashx;
-import com.mina.kartngo.data.remote.entites.pojo.ImageRequest;
-import com.mina.kartngo.data.remote.entites.pojo.ImageResponse;
-import com.mina.kartngo.data.remote.entites.pojo.ProductsResponse;
+import com.mina.kartngo.data.remote.products.pojo.DetailedProduct;
+import com.mina.kartngo.data.remote.products.pojo.GetAllProductsRequest;
+import com.mina.kartngo.data.remote.products.pojo.Hashx;
+import com.mina.kartngo.data.remote.products.pojo.ImageRequest;
+import com.mina.kartngo.data.remote.products.pojo.ImageResponse;
+import com.mina.kartngo.data.remote.products.pojo.ProductsResponse;
 import com.mina.kartngo.models.Product;
 
 import java.util.ArrayList;
@@ -21,10 +21,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ProductRepository {
+public class ProductsRepository {
 
     private final ProductsApi productsApi;
-    public ProductRepository(ProductsApi productsApi) {
+    public ProductsRepository(ProductsApi productsApi) {
         this.productsApi = productsApi;
     }
     

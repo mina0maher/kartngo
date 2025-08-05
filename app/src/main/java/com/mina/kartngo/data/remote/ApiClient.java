@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.mina.kartngo.data.remote.auth.AuthApi;
 import com.mina.kartngo.data.remote.auth.AuthInterceptor;
-import com.mina.kartngo.data.remote.entites.ProductsApi;
+import com.mina.kartngo.data.remote.products.ProductsApi;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;

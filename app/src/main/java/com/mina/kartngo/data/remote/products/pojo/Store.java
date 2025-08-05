@@ -1,4 +1,4 @@
-package com.mina.kartngo.data.remote.entites.pojo;
+package com.mina.kartngo.data.remote.products.pojo;
 
 import com.google.gson.annotations.SerializedName;
 

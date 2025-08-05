@@ -7,8 +7,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.mina.kartngo.data.remote.entites.ProductRepository;
-import com.mina.kartngo.data.remote.entites.ProductsApi;
+import com.mina.kartngo.data.remote.products.ProductsRepository;
+import com.mina.kartngo.data.remote.products.ProductsApi;
 import com.mina.kartngo.models.OrderItem;
 import com.mina.kartngo.models.Product;
 
@@ -19,7 +19,7 @@ import java.util.Objects;
 import java.util.Set;
 public class MainViewModel extends AndroidViewModel {
 
-    private final ProductRepository repository;
+    private final ProductsRepository repository;
 
     private final MutableLiveData<List<Product>> productsLiveData = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
@@ -37,7 +37,7 @@ public class MainViewModel extends AndroidViewModel {
 
     public MainViewModel(Application application, ProductsApi productsApi) {
         super(application);
-        repository = new ProductRepository(productsApi);
+        repository = new ProductsRepository(productsApi);
         loadNextPage();
 
         productsLiveData.observeForever(products -> {

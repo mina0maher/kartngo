@@ -1,4 +1,4 @@
-package com.mina.kartngo.data.remote.entites.pojo;
+package com.mina.kartngo.data.remote.products.pojo;
 
 public class ImageResponse {
     public Resource resource;
