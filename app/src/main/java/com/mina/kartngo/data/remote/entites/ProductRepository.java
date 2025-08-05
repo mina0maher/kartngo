@@ -96,9 +96,11 @@ public class ProductRepository {
         for (DetailedProduct dp : detailedList) {
             Product product = new Product(
                     dp.getProductID(),
-                    dp.getProductName(),
+                    parseLocalizedString(dp.getProductName(),language),
                     dp.getAvatar(),
-                    dp.getCategory() != null ? parseLocalizedString(dp.getCategory().getCategory(),language): "[en=Uncategorized][ar=غير مصنف]",
+                    (dp.getCategory() != null && dp.getCategory().getCategory() != null)
+                            ? parseLocalizedString(dp.getCategory().getCategory(), language)
+                            : parseLocalizedString("[en=Uncategorized][ar=غير مصنف]",language),
                     dp.getStandardUnitPrice(),
                     dp.getDescription() != null ? dp.getDescription() : ""
             );
