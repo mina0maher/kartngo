@@ -23,6 +23,7 @@ import com.mina.kartngo.screens.utils.GenericDiffCallback;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductViewHolder> {
 
@@ -33,8 +34,10 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
 
     public ProductAdapter(OnProductActionListener listener, String currency) {
         super(new GenericDiffCallback<>(
-                (oldItem, newItem) -> oldItem.getId() == newItem.getId(), // areItemsSame
-                Product::equals // areContentsSame
+                (oldItem, newItem) -> Objects.equals(oldItem.getId(), newItem.getId()),
+                (oldItem, newItem) ->
+                        Objects.equals(oldItem.getId(), newItem.getId()) &&
+                                Objects.equals(oldItem.getImage(), newItem.getImage())
         ));
         this.listener = listener;
         this.currency = currency;
@@ -42,31 +45,25 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
 
     public void setOrderItems(List<OrderItem> orderItems) {
         this.currentOrderList = orderItems != null ? orderItems : new ArrayList<>();
-        notifyDataSetChanged();
+        // نعمل submitList لنفس الليست علشان يشتغل DiffUtil
+        submitList(new ArrayList<>(getCurrentList()));
     }
 
-    // ✅ تستخدمها لأول تحميل أو لإعادة التحميل من أول وجديد
     public void setProducts(List<Product> newProducts) {
-        if (newProducts == null) {
-            submitList(new ArrayList<>());
-            return;
+        fullProductList.clear();
+        if (newProducts != null) {
+            fullProductList.addAll(newProducts);
         }
-
-        if (!newProducts.equals(getCurrentList())) {
-            submitList(new ArrayList<>(newProducts)); // DiffUtil يشتغل لكن بأقل ضرر
-        }
+        submitList(new ArrayList<>(fullProductList));
     }
 
-    // ✅ تستخدمها لما تجيب صفحة جديدة وتضيفها على اللي قبلها
     public void addItems(List<Product> newProducts) {
         if (newProducts != null && !newProducts.isEmpty()) {
-            int start = fullProductList.size();
             fullProductList.addAll(newProducts);
             submitList(new ArrayList<>(fullProductList));
         }
     }
 
-    // ✅ تستخدمها لو حبيت تمسح كل البيانات
     public void clearItems() {
         fullProductList.clear();
         submitList(new ArrayList<>());
@@ -87,13 +84,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         holder.textTitle.setText(product.getName());
         holder.textPrice.setText(product.getPrice() + " " + currency);
 
-        int quantity = 0;
-        for (OrderItem item : currentOrderList) {
-            if (item.getProduct().getId() == product.getId()) {
-                quantity = item.getQuantity();
-                break;
-            }
-        }
+        int quantity = getQuantityForProduct(product);
         holder.textCount.setText(String.valueOf(quantity));
 
         Bitmap bitmap = decodeBase64ToBitmap(product.getImage());
@@ -105,9 +96,25 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
             holder.imgProduct.setImageResource(R.drawable.logo);
         }
 
-        holder.buttonPlus.setOnClickListener(v -> listener.onIncreaseClicked(product));
-        holder.buttonMinus.setOnClickListener(v -> listener.onDecreaseClicked(product));
+        holder.buttonPlus.setOnClickListener(v -> {
+            listener.onIncreaseClicked(product);
+            notifyItemChanged(holder.getAdapterPosition());
+        });
+
+        holder.buttonMinus.setOnClickListener(v -> {
+            listener.onDecreaseClicked(product);
+            notifyItemChanged(holder.getAdapterPosition());
+        });
         holder.layout.setOnClickListener(v -> listener.onProductClicked(product));
+    }
+
+    private int getQuantityForProduct(Product product) {
+        for (OrderItem item : currentOrderList) {
+            if (Objects.equals(item.getProduct().getId(), product.getId())) {
+                return item.getQuantity();
+            }
+        }
+        return 0;
     }
 
     static class ProductViewHolder extends RecyclerView.ViewHolder {
