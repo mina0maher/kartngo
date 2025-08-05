@@ -11,17 +11,26 @@ public class Product {
     private double price;
     private String details;
 
-    public Product(String id, String name, String image, String category, double price, String details) {
+    private String storeImage;
+
+    public Product(String id, String name, String image, String category, double price, String details, String storeImage) {
         this.id = id;
         this.name = name;
         this.image = image;
         this.category = category;
         this.price = price;
         this.details = details;
+        this.storeImage = storeImage;
     }
 
 
+    public String getStoreImage() {
+        return storeImage;
+    }
 
+    public void setStoreImage(String storeImage) {
+        this.storeImage = storeImage;
+    }
 
     public String getId() {
         return id;
@@ -76,6 +85,7 @@ public class Product {
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
         return  Objects.equals(id, product.id) &&
-                Objects.equals(image, product.image);
+                Objects.equals(image, product.image)&&
+                Objects.equals(storeImage, product.storeImage);
     }
 }

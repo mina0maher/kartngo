@@ -87,13 +87,22 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
         int quantity = getQuantityForProduct(product);
         holder.textCount.setText(String.valueOf(quantity));
 
-        Bitmap bitmap = decodeBase64ToBitmap(product.getImage());
-        if (bitmap != null) {
+        Bitmap productBitmap = decodeBase64ToBitmap(product.getImage());
+        if (productBitmap != null) {
             Glide.with(holder.imgProduct.getContext())
-                    .load(bitmap)
+                    .load(productBitmap)
                     .into(holder.imgProduct);
         } else {
-            holder.imgProduct.setImageResource(R.drawable.logo);
+            holder.imgProduct.setImageResource(R.drawable.ic_product);
+        }
+
+        Bitmap storeBitmap = decodeBase64ToBitmap(product.getStoreImage());
+        if (storeBitmap != null) {
+            Glide.with(holder.imgStore.getContext())
+                    .load(storeBitmap)
+                    .into(holder.imgStore);
+        } else {
+            holder.imgProduct.setImageResource(R.drawable.ic_store);
         }
 
         holder.buttonPlus.setOnClickListener(v -> {
@@ -119,7 +128,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
 
     static class ProductViewHolder extends RecyclerView.ViewHolder {
         TextView textTitle, textPrice, textCount;
-        ImageView imgProduct;
+        ImageView imgProduct,imgStore;
         TextView buttonPlus, buttonMinus;
         LinearLayout layout;
 
@@ -129,6 +138,7 @@ public class ProductAdapter extends ListAdapter<Product, ProductAdapter.ProductV
             textTitle = itemView.findViewById(R.id.textTitle);
             textPrice = itemView.findViewById(R.id.textPrice);
             textCount = itemView.findViewById(R.id.textCounter);
+            imgStore = itemView.findViewById(R.id.imgStore);
             imgProduct = itemView.findViewById(R.id.imgProduct);
             buttonPlus = itemView.findViewById(R.id.buttonPlus);
             buttonMinus = itemView.findViewById(R.id.buttonMinus);

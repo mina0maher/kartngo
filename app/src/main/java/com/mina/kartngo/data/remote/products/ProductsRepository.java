@@ -2,7 +2,6 @@ package com.mina.kartngo.data.remote.products;
 
 import static com.mina.kartngo.data.util.Helpers.parseLocalizedString;
 
-import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -27,71 +26,35 @@ public class ProductsRepository {
 
     private final ProductsApi productsApi;
     private final ResourceRepository resourceRepository;
+
     public ProductsRepository(ProductsApi productsApi, ResourceRepository resourceRepository) {
         this.productsApi = productsApi;
         this.resourceRepository = resourceRepository;
     }
-    
-//    public void fetchImage(String imageId){
-//        productsApi.getResource(new ImageRequest(imageId)).enqueue(new Callback<ImageResponse>() {
-//            @Override
-//            public void onResponse(Call<ImageResponse> call, Response<ImageResponse> response) {
-//                String base64Data = response.body().getResource().getHashx().getBase64Data();
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ImageResponse> call, Throwable t) {
-//
-//            }
-//        });
-//    }
+
     public void fetchProducts(String language, int size, int start, MutableLiveData<List<Product>> liveData) {
         GetAllProductsRequest request = new GetAllProductsRequest(size, start);
+
         productsApi.getAllProducts(request).enqueue(new Callback<ProductsResponse>() {
             @Override
             public void onResponse(Call<ProductsResponse> call, Response<ProductsResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<DetailedProduct> rawList = response.body().getList();
                     List<Product> mappedList = mapToUiProducts(language, rawList);
-                    liveData.postValue(mappedList); // Step 1: Show products without image
+
+                    liveData.postValue(mappedList); // Step 1: Show products without images
 
                     for (int i = 0; i < rawList.size(); i++) {
                         int index = i;
-                        String imageId = rawList.get(index).getAvatar();
 
-                        if (imageId != null && !imageId.isEmpty()) {
-                            resourceRepository.getResourceByIdAsync(imageId, new ResourceRepository.ResourceCallback() {
-                                @Override
-                                public void onLoaded(String base64Data) {
-                                    mappedList.get(index).setImage(base64Data);
-                                    liveData.postValue(new ArrayList<>(mappedList)); // Update with cached image
-                                }
+                        String productImageId = rawList.get(index).getAvatar();
+                        String storeImageId = rawList.get(index).getStore().getAvatar();
 
-                                @Override
-                                public void onNotFound() {
-                                    productsApi.getResource(new ImageRequest(imageId)).enqueue(new Callback<ImageResponse>() {
-                                        @Override
-                                        public void onResponse(Call<ImageResponse> call, Response<ImageResponse> response) {
-                                            if (response.isSuccessful() && response.body() != null) {
-                                                Hashx hashx = response.body().getResource().getHashx();
-                                                if (hashx != null && hashx.getBase64Data() != null) {
-                                                    String base64 = hashx.getBase64Data();
-                                                    mappedList.get(index).setImage(base64);
-                                                    liveData.postValue(new ArrayList<>(mappedList)); // Update with new image
+                        // ✅ تحميل صورة المنتج
+                        fetchAndAttachImage(productImageId, index, mappedList, liveData, true);
 
-                                                    resourceRepository.insertResourceAsync(imageId, base64); // Cache it
-                                                }
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<ImageResponse> call, Throwable t) {
-                                            // Ignore image fetch failure
-                                        }
-                                    });
-                                }
-                            });
-                        }
+                        // ✅ تحميل صورة المتجر
+                        fetchAndAttachImage(storeImageId, index, mappedList, liveData, false);
                     }
 
                 } else {
@@ -105,19 +68,94 @@ public class ProductsRepository {
             }
         });
     }
+
+    private void fetchAndAttachImage(String imageId, int index, List<Product> mappedList, MutableLiveData<List<Product>> liveData, boolean isProductImage) {
+        if (imageId == null || imageId.isEmpty()) return;
+
+        resourceRepository.getResourceByIdAsync(imageId, new ResourceRepository.ResourceCallback() {
+            @Override
+            public void onLoaded(String base64Data) {
+                if (isProductImage) {
+                    mappedList.get(index).setImage(base64Data);
+                } else {
+                    mappedList.get(index).setStoreImage(base64Data);
+                }
+                liveData.postValue(new ArrayList<>(mappedList));
+            }
+
+            @Override
+            public void onNotFound() {
+                fetchImageFromApi(imageId, new ResourceCallback() {
+                    @Override
+                    public void onImageFetched(String base64) {
+                        if (isProductImage) {
+                            mappedList.get(index).setImage(base64);
+                        } else {
+                            mappedList.get(index).setStoreImage(base64);
+                        }
+                        liveData.postValue(new ArrayList<>(mappedList));
+                    }
+                });
+            }
+        });
+    }
+
+    private void fetchAndCacheOnly(String imageId) {
+        if (imageId == null || imageId.isEmpty()) return;
+
+        resourceRepository.getResourceByIdAsync(imageId, new ResourceRepository.ResourceCallback() {
+            @Override
+            public void onLoaded(String base64Data) {
+                // Already cached, nothing to do
+            }
+
+            @Override
+            public void onNotFound() {
+                fetchImageFromApi(imageId, null); // No UI update needed
+            }
+        });
+    }
+
+    private void fetchImageFromApi(String imageId, ResourceCallback callback) {
+        productsApi.getResource(new ImageRequest(imageId)).enqueue(new Callback<ImageResponse>() {
+            @Override
+            public void onResponse(Call<ImageResponse> call, Response<ImageResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Hashx hashx = response.body().getResource().getHashx();
+                    if (hashx != null && hashx.getBase64Data() != null) {
+                        String base64 = hashx.getBase64Data();
+
+                        // Cache image
+                        resourceRepository.insertResourceAsync(imageId, base64);
+
+                        if (callback != null) {
+                            callback.onImageFetched(base64);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ImageResponse> call, Throwable t) {
+                Log.e("ProductsRepo", "Failed to fetch image: " + imageId, t);
+            }
+        });
+    }
+
     private List<Product> mapToUiProducts(String language, List<DetailedProduct> detailedList) {
         List<Product> uiList = new ArrayList<>();
 
         for (DetailedProduct dp : detailedList) {
             Product product = new Product(
                     dp.getProductID(),
-                    parseLocalizedString(dp.getProductName(),language),
+                    parseLocalizedString(dp.getProductName(), language),
                     dp.getAvatar(),
                     (dp.getCategory() != null && dp.getCategory().getCategory() != null)
                             ? parseLocalizedString(dp.getCategory().getCategory(), language)
-                            : parseLocalizedString("[en=Uncategorized][ar=غير مصنف]",language),
+                            : parseLocalizedString("[en=Uncategorized][ar=غير مصنف]", language),
                     dp.getStandardUnitPrice(),
-                    dp.getDescription() != null ? parseLocalizedString(dp.getDescription(),language) : ""
+                    dp.getDescription() != null ? parseLocalizedString(dp.getDescription(), language) : "",
+                    dp.getStore().getAvatar()
             );
             uiList.add(product);
         }
@@ -125,4 +163,7 @@ public class ProductsRepository {
         return uiList;
     }
 
+    private interface ResourceCallback {
+        void onImageFetched(String base64);
+    }
 }
