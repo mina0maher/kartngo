@@ -3,7 +3,7 @@ package com.mina.kartngo.data.local.resources;
 import android.content.Context;
 
 import com.mina.kartngo.data.local.AppDatabase;
-import com.mina.kartngo.data.local.products.ProductDao;
+
 
 public class ResourceRepository {
     private final ResourceDao resourceDao;
@@ -30,9 +30,7 @@ public class ResourceRepository {
     }
 
     public void insertResourceAsync(String resourceId, String base64Data) {
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            resourceDao.insertResource(new ResourceEntity(resourceId, base64Data));
-        });
+        AppDatabase.databaseWriteExecutor.execute(() -> resourceDao.insertResource(new ResourceEntity(resourceId, base64Data)));
     }
 }
 
