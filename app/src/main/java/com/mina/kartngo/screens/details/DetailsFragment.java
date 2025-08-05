@@ -1,7 +1,10 @@
 package com.mina.kartngo.screens.details;
 
+import static com.mina.kartngo.screens.utils.Helpers.decodeBase64ToBitmap;
+
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -64,10 +67,16 @@ public class DetailsFragment extends Fragment {
             productId = getArguments().getString(ARG_PRODUCT_ID);
             product = viewModel.getProductById(productId);
 
+
             if (product != null) {
-                Glide.with(requireContext())
-                        .load(product.getImage())
-                        .into(ivImage);
+                Bitmap bitmap = decodeBase64ToBitmap(product.getImage());
+                if (bitmap != null) {
+                    Glide.with(ivImage.getContext())
+                            .load(bitmap)
+                            .into(ivImage);
+                } else {
+                    ivImage.setImageResource(R.drawable.logo);
+                }
 
                 tvName.setText(product.getName());
                 tvPrice.setText(product.getPrice() + " " + prefs.getString("currency", null));

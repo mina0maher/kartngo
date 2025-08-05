@@ -117,7 +117,7 @@ public class ProductsRepository {
                             ? parseLocalizedString(dp.getCategory().getCategory(), language)
                             : parseLocalizedString("[en=Uncategorized][ar=غير مصنف]",language),
                     dp.getStandardUnitPrice(),
-                    dp.getDescription() != null ? dp.getDescription() : ""
+                    dp.getDescription() != null ? parseLocalizedString(dp.getDescription(),language) : ""
             );
             uiList.add(product);
         }
