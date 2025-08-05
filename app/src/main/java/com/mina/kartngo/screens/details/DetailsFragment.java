@@ -29,7 +29,7 @@ public class DetailsFragment extends Fragment {
     private ImageView ivImage, btnBack;
     private TextView tvName, tvPrice, tvCategory, tvDescription;
 
-    private int productId;
+    private String productId;
     private Product product;
     private  SharedPreferences prefs;
 
@@ -56,7 +56,7 @@ public class DetailsFragment extends Fragment {
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
         if (getArguments() != null) {
-            productId = getArguments().getInt(ARG_PRODUCT_ID);
+            productId = getArguments().getString(ARG_PRODUCT_ID);
             product = viewModel.getProductById(productId);
 
             if (product != null) {

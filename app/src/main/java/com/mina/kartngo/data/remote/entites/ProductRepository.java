@@ -1,6 +1,6 @@
 package com.mina.kartngo.data.remote.entites;
 
-import static com.mina.kartngo.data.util.Helpers.parseLocalizedCategory;
+import static com.mina.kartngo.data.util.Helpers.parseLocalizedString;
 
 import android.util.Log;
 
@@ -95,10 +95,10 @@ public class ProductRepository {
 
         for (DetailedProduct dp : detailedList) {
             Product product = new Product(
-                    dp.getProductID().hashCode(),
+                    dp.getProductID(),
                     dp.getProductName(),
                     dp.getAvatar(),
-                    dp.getCategory() != null ? parseLocalizedCategory(dp.getCategory().getCategory(),language) : "Uncategorized",
+                    dp.getCategory() != null ? parseLocalizedString(dp.getCategory().getCategory(),language): "[en=Uncategorized][ar=غير مصنف]",
                     dp.getStandardUnitPrice(),
                     dp.getDescription() != null ? dp.getDescription() : ""
             );

@@ -71,7 +71,7 @@ public class MainViewModel extends AndroidViewModel {
                     List<Product> currentList = productsLiveData.getValue();
                     if (currentList == null) currentList = new ArrayList<>();
 
-                    Set<Integer> existingIds = new LinkedHashSet<>();
+                    Set<String> existingIds = new LinkedHashSet<>();
                     for (Product p : currentList) {
                         existingIds.add(p.getId());
                     }
@@ -132,11 +132,11 @@ public class MainViewModel extends AndroidViewModel {
         return searchQueryLiveData;
     }
 
-    public Product getProductById(int id) {
+    public Product getProductById(String id) {
         List<Product> allProducts = productsLiveData.getValue();
         if (allProducts != null) {
             for (Product product : allProducts) {
-                if (product.getId() == id) {
+                if (Objects.equals(product.getId(), id)) {
                     return product;
                 }
             }

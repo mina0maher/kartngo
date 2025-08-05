@@ -1,15 +1,17 @@
 package com.mina.kartngo.models;
 
+import java.util.Objects;
+
 public class Product {
 
-    private int id;
+    private String id;
     private String name;
     private String image;
     private String category;
     private double price;
     private String details;
 
-    public Product(int id, String name, String image, String category, double price, String details) {
+    public Product(String id, String name, String image, String category, double price, String details) {
         this.id = id;
         this.name = name;
         this.image = image;
@@ -21,11 +23,11 @@ public class Product {
 
 
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) { this.id = id; }
+    public void setId(String id) { this.id = id; }
 
     public String getName() {
         return name;
@@ -73,6 +75,6 @@ public class Product {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return id == product.id;
+        return Objects.equals(id, product.id);
     }
 }

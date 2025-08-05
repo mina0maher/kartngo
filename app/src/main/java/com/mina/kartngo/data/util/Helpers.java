@@ -1,7 +1,7 @@
 package com.mina.kartngo.data.util;
 
 public class Helpers {
-    public static String parseLocalizedCategory(String rawCategory, String language) {
+    public static String parseLocalizedString(String rawCategory, String language) {
         if (rawCategory == null) return "Uncategorized";
 
 

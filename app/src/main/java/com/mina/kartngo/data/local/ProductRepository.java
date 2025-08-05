@@ -55,7 +55,7 @@ public class ProductRepository implements ProductDataSource {
 
     private Product mapEntityToModel(ProductEntity entity) {
         return new Product(
-                entity.getId(),
+                String.valueOf(entity.getId()),
                 entity.getName(),
                 entity.getImageUrl(),
                 entity.getCategory(),
@@ -73,7 +73,7 @@ public class ProductRepository implements ProductDataSource {
                 model.getCategory(),
                 model.getDetails()
         );
-        entity.setId(model.getId());
+        entity.setId(Integer.parseInt(model.getId()));
         return entity;
     }
 }

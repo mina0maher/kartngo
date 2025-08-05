@@ -94,7 +94,7 @@ public class OrderFragment extends Fragment {
             @Override
             public void onProductClicked(Product product) {
                 Bundle bundle = new Bundle();
-                bundle.putInt("productId", product.getId());
+                bundle.putString("productId", product.getId());
                 NavHostFragment.findNavController(OrderFragment.this)
                         .navigate(R.id.action_orderFragment_to_detailsFragment, bundle);
             }

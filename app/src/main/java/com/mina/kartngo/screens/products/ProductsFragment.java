@@ -152,7 +152,7 @@ public class ProductsFragment extends Fragment {
             @Override
             public void onProductClicked(Product product) {
                 Bundle bundle = new Bundle();
-                bundle.putInt("productId", product.getId());
+                bundle.putString("productId", product.getId());
                 NavHostFragment.findNavController(ProductsFragment.this)
                         .navigate(R.id.action_productsFragment_to_detailsFragment, bundle);
             }
