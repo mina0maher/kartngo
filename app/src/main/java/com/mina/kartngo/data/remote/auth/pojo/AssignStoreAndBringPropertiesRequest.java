@@ -5,10 +5,9 @@ import com.google.gson.annotations.SerializedName;
 public class AssignStoreAndBringPropertiesRequest {
     private String storeId;
     @SerializedName("class")
-    private String className;
+    private String className = "sa.com.doit.cart.service.request.store.AssignStoreAndBringPropertiesRequest";
 
-    public AssignStoreAndBringPropertiesRequest(String className, String storeId) {
-        this.className = className;
+    public AssignStoreAndBringPropertiesRequest( String storeId) {
         this.storeId = storeId;
     }
 
@@ -16,9 +15,7 @@ public class AssignStoreAndBringPropertiesRequest {
         return className;
     }
 
-    public void setClassName(String className) {
-        this.className = className;
-    }
+
 
     public String getStoreId() {
         return storeId;

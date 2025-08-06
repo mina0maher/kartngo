@@ -76,7 +76,6 @@ public class AuthRepository {
 
         authApi.assignStoreAndBringProperties(
                         new AssignStoreAndBringPropertiesRequest(
-                                "sa.com.doit.cart.service.request.store.AssignStoreAndBringPropertiesRequest",
                                 storeId
                         )
                 )
